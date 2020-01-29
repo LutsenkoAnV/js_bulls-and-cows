@@ -1,8 +1,11 @@
 'use strict';
 
 function bullsAndCowsGame() {
+  let history = '';
+  let count = 0;
+
   function enteredFourDigits() {
-    const entered = window.prompt('Enter 4-digit number with different digits',
+    const entered = window.prompt('Enter your number',
       1234);
 
     if (entered === null) {
@@ -18,12 +21,15 @@ function bullsAndCowsGame() {
     for (let k = 0; k < entered.length; k++) {
       for (let j = k + 1; j < entered.length; j++) {
         if (entered[k] === entered[j]) {
-          window.alert('Wrong number! Input number again.');
+          window.alert('Wrong number! Digits should not be repeated.');
 
           return undefined;
         }
       }
     }
+
+    count++;
+    history = `${count}.  ${entered}\n` + history;
 
     return entered;
   }
@@ -31,7 +37,7 @@ function bullsAndCowsGame() {
   let enteredNum = enteredFourDigits();
 
   if (enteredNum === null) {
-    window.alert('Try again later');
+    window.alert('Try again later.');
 
     return undefined;
   }
@@ -40,37 +46,18 @@ function bullsAndCowsGame() {
     enteredNum = enteredFourDigits();
   }
 
-  function random(min, max) {
-    return Math.floor(
-      Math.random() * (max - min + 1) + min
-    );
-  }
-
   function generateNumberByComp() {
-    let result = '';
+    let numbers = '';
 
-    const firstNum = random(0, 9);
-    let secondNum;
-    let thirdNum;
-    let fourthNum;
+    while (numbers.length < 4) {
+      const number = Math.trunc(Math.random() * 10);
 
-    do {
-      secondNum = random(0, 9);
-    } while (firstNum === secondNum);
+      if (!numbers.includes(String(number))) {
+        numbers += number;
+      }
+    }
 
-    do {
-      thirdNum = random(0, 9);
-    } while (thirdNum === firstNum || thirdNum === secondNum);
-
-    do {
-      fourthNum = random(0, 9);
-    } while (fourthNum === firstNum
-      || fourthNum === secondNum
-      || fourthNum === thirdNum);
-
-    result = result + firstNum + secondNum + thirdNum + fourthNum;
-
-    return result;
+    return numbers;
   }
 
   const generatedNum = generateNumberByComp();
@@ -93,35 +80,32 @@ function bullsAndCowsGame() {
     };
 
     if (generatedNum === enteredNum) {
-      window.alert('You win!!!\nBulls: '
-      + resultObj.bulls
-      + ', Cows: '
-      + resultObj.cows);
+      window.alert(`You win!!!
+Bulls: ${resultObj.bulls}, Cows: ${resultObj.cows}`);
     } else {
-      window.alert('Your number: '
-      + enteredNum
-      + '\nBulls: '
-      + resultObj.bulls
-      + ', Cows: '
-      + resultObj.cows);
+      window.alert(`\nBulls: ${resultObj.bulls}, Cows: ${resultObj.cows}
+
+Your numbers:
+${history}`);
     }
   }
 
   bullsAndCows(generatedNum, enteredNum);
 
   while (generatedNum !== enteredNum) {
-    if (window.confirm('Continue to play?')) {
+    enteredNum = enteredFourDigits();
+
+    while (enteredNum === undefined) {
       enteredNum = enteredFourDigits();
-
-      while (enteredNum === undefined) {
-        enteredNum = enteredFourDigits();
-      }
-
-      bullsAndCows(generatedNum, enteredNum);
-    } else {
-      window.alert('Try again later');
-      break;
     }
+
+    if (enteredNum === null) {
+      window.alert('Try again later.');
+
+      return undefined;
+    }
+
+    bullsAndCows(generatedNum, enteredNum);
   }
 }
 
